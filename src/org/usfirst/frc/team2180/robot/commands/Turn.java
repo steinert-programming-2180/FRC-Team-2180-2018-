@@ -1,14 +1,9 @@
 package org.usfirst.frc.team2180.robot.commands;
 
-import org.usfirst.frc.team2180.robot.Constants;
 import org.usfirst.frc.team2180.robot.Robot;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
-
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-// pls try implementing PID for gyros + turning, future Nikhil
 
 public class Turn extends Command {
 	

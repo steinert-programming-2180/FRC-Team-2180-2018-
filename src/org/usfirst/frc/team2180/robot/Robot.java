@@ -8,32 +8,30 @@
 package org.usfirst.frc.team2180.robot;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
-import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import org.usfirst.frc.team2180.robot.commands.Spot1OneCube;
-import org.usfirst.frc.team2180.robot.commands.Spot2OneCube;
-import org.usfirst.frc.team2180.robot.commands.Spot3OneCube;
+import org.usfirst.frc.team2180.robot.commands.BaselineAuto;
+import org.usfirst.frc.team2180.robot.commands.OneCubeAuto;
+import org.usfirst.frc.team2180.robot.commands.ThreeCubeAuto;
+import org.usfirst.frc.team2180.robot.commands.TwoCubeAuto;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class Robot extends TimedRobot {
-		
-	public static Command oneCubeAutonCommand;
-	public static SendableChooser<Command> oneCubeAuton;
+	
+	public static SendableChooser<Command> autoCommandChooser;
+	public static SendableChooser<Integer> robotPositionChooser;
+	public static Command autoCommand;
+	public static int robotPosition;
 	public static WPI_TalonSRX talon1, talon2, talon3;
 	public static WPI_TalonSRX regTalon1, regTalon2, regTalon3;
 	public static WPI_TalonSRX elevatorTalon, grabberFlipperTalon;
@@ -65,21 +63,28 @@ public class Robot extends TimedRobot {
 		regTalon2.follow(regTalon1);
 		regTalon3.follow(regTalon1);
 		
-		oneCubeAuton = new SendableChooser<>();
-		SmartDashboard.putData("One Cube Auton", oneCubeAuton);
-		
 		gyro = new ADXRS450_Gyro();
 		
 		limitTop = new DigitalInput(0);
 		limitBottom = new DigitalInput(1);
 		
+		autoCommandChooser = new SendableChooser<>();
+		autoCommandChooser.addDefault("One Cube", new OneCubeAuto());
+		autoCommandChooser.addObject("Two Cubes", new TwoCubeAuto());
+		autoCommandChooser.addObject("Three Cubes", new ThreeCubeAuto());
+		autoCommandChooser.addObject("Cross Baseline", new BaselineAuto());
+		autoCommandChooser.addObject("Do Nothing", null);
+		SmartDashboard.putData("Pick An Autonomous Routine", autoCommandChooser);
+		
+		robotPositionChooser = new SendableChooser<>();
+		robotPositionChooser.addDefault("1", new Integer(1));
+		robotPositionChooser.addObject("2", new Integer(2));
+		robotPositionChooser.addObject("3", new Integer(3));
+		SmartDashboard.putData("Pick The Bot's Position", robotPositionChooser);
+		
 		setupDrivetrainPID();
 		setupGyroPID();
 		setupElevatorPID();
-		
-		oneCubeAuton.addDefault("Spot 1", new Spot1OneCube());
-		oneCubeAuton.addDefault("Spot 2", new Spot2OneCube());
-		oneCubeAuton.addDefault("Spot 3", new Spot3OneCube());
 	}
 
 	@Override
@@ -94,17 +99,14 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit() {
-		oneCubeAutonCommand = oneCubeAuton.getSelected();
-
-		if (oneCubeAutonCommand != null) {
-			oneCubeAutonCommand.start();
-		}
-
+		
 		talon1.setSelectedSensorPosition(0, 0, 10);
 		
-//		if (auton != null) {
-//			auton.start();
-//		}
+		autoCommand = autoCommandChooser.getSelected();
+		
+		if (autoCommand != null) {
+			autoCommand.start();
+		}
 	}
 
 	@Override
@@ -118,9 +120,9 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
 
-		if (oneCubeAutonCommand != null) {
-			oneCubeAutonCommand.cancel();
-		}
+//		if (oneCubeAutonCommand != null) {
+//			oneCubeAutonCommand.cancel();
+//		}
 		
 		gyro.reset();
 		
@@ -134,15 +136,7 @@ public class Robot extends TimedRobot {
 		talon1.set(-left.getRawAxis(1));
 		regTalon1.set(-right.getRawAxis(1));
 		
-		SmartDashboard.putNumber("Gyro factor", gyro.getAngle()*Constants.gyroKP);
-		
-		SmartDashboard.putNumber("Teleop Talon Speed", regTalon1.getMotorOutputPercent());
-		
-		position = talon1.getSelectedSensorPosition(0);
-		
-		SmartDashboard.putNumber("Position", position);
-		
-		if (limitTop.get() || limitBottom.get()) {
+		if ((limitTop.get() || limitBottom.get()) && elevatorTalon.get() != 0.0) {
 			elevatorTalon.set(0.0);
 		} else {
 			elevatorTalon.set(payload.getRawAxis(1));
