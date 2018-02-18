@@ -142,6 +142,24 @@ public class Robot extends TimedRobot {
 			elevatorTalon.set(payload.getRawAxis(1));
 		}
 		
+		// cube intake
+		if (payload.getRawButton(2)) {
+			grabberTalon1.set(-1.0);
+			grabberTalon2.set(-0.7);
+		} else {
+			grabberTalon1.set(0.0);
+			grabberTalon2.set(0.0);
+		}
+		
+		//cube release
+		if (payload.getRawButton(1)) {
+			grabberTalon1.set(1.0);
+			grabberTalon2.set(1.0);
+		} else {
+			grabberTalon1.set(0.0);
+			grabberTalon2.set(0.0);
+		}
+		
 		Scheduler.getInstance().run();
 	}
 
