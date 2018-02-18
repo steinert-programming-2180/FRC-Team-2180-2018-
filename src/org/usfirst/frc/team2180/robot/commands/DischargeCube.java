@@ -8,15 +8,16 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class SpitOutCube extends Command {
+public class DischargeCube extends Command {
 	
 	Timer timer;
 	
-    public SpitOutCube() {
-        timer = new Timer();
+    public DischargeCube() {
+    	timer = new Timer();
     }
 
     protected void initialize() {
+    	timer.start();
     }
 
     protected void execute() {
@@ -25,13 +26,14 @@ public class SpitOutCube extends Command {
     }
 
     protected boolean isFinished() {
-    	if (timer.get() > 0.5) {
+    	if (timer.get() > 0.3) {
     		return true;
     	}
         return false;
     }
 
     protected void end() {
+    	timer.stop();
     	Robot.grabberTalon1.set(0.0);
     	Robot.grabberTalon2.set(0.0);
     }
