@@ -43,6 +43,7 @@ public class Robot extends TimedRobot {
 	public static PIDOutput gyroPIDOutput;
 	public static Joystick left, right, payload;
 	public static DigitalInput limitTop, limitBottom;
+	public static double elevatorOutput;
 	
 	@Override
 	public void robotInit() {
@@ -85,6 +86,8 @@ public class Robot extends TimedRobot {
 		setupDrivetrainPID();
 		setupGyroPID();
 		setupElevatorPID();
+		
+		elevatorOutput = 0.0;
 	}
 
 	@Override
@@ -132,11 +135,15 @@ public class Robot extends TimedRobot {
 		talon1.set(-left.getRawAxis(1));
 		regTalon1.set(-right.getRawAxis(1));
 		
-		if ((limitTop.get() || limitBottom.get()) && elevatorTalon.get() != 0.0) {
-			elevatorTalon.set(0.0);
-		} else {
-			elevatorTalon.set(payload.getRawAxis(1));
+		elevatorOutput = payload.getRawAxis(1);
+		
+		if (limitTop.get()) {
+			elevatorOutput = Math.min(elevatorOutput, 0);
+		} else if (limitBottom.get()) {
+			elevatorOutput = Math.max(elevatorOutput, 0);
 		}
+		
+		elevatorTalon.set(elevatorOutput);
 		
 		// cube intake
 		if (payload.getRawButton(2)) {
