@@ -119,10 +119,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit() {
-
-//		if (oneCubeAutonCommand != null) {
-//			oneCubeAutonCommand.cancel();
-//		}
 		
 		gyro.reset();
 		
@@ -235,6 +231,6 @@ public class Robot extends TimedRobot {
 	}
 	
 	public static int inchesToTicks(double inches) {
-		return (int) ((inches / (Constants.wheelDiameter * Math.PI)) * Constants.ticksPerRev);
+		return (int) (((inches / (Constants.wheelDiameter * Math.PI)) * Constants.ticksPerRev));
 	}
 }
