@@ -23,14 +23,15 @@ import org.usfirst.frc.team2180.robot.commands.OneCubeAuto;
 import org.usfirst.frc.team2180.robot.commands.ThreeCubeAuto;
 import org.usfirst.frc.team2180.robot.commands.TwoCubeAuto;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class Robot extends TimedRobot {
 	
-	public static SendableChooser<Command> autoCommandChooser;
+	public static SendableChooser<String> autoCommandChooser;
 	public static SendableChooser<Integer> robotPositionChooser;
-	public static Command autoCommand;
+	public static String autoCommand;
 	public static int robotPosition;
 	public static WPI_TalonSRX talon1, talon2, talon3;
 	public static WPI_TalonSRX regTalon1, regTalon2, regTalon3;
@@ -42,7 +43,7 @@ public class Robot extends TimedRobot {
 	public static PIDController gyroPID;
 	public static PIDOutput gyroPIDOutput;
 	public static Joystick left, right, payload;
-	public static DigitalInput limitTop, limitBottom;
+	public static DigitalInput limitBottom;
 	public static double elevatorOutput;
 	
 	@Override
@@ -55,25 +56,23 @@ public class Robot extends TimedRobot {
 		regTalon2 = new WPI_TalonSRX(22);
 		regTalon3 = new WPI_TalonSRX(33);
 		
-		elevatorTalon = new WPI_TalonSRX(44);
+		elevatorTalon = new WPI_TalonSRX(40);
 		grabberFlipperTalon = new WPI_TalonSRX(55);
 		
-		grabberTalon1 = new WPI_TalonSRX(40);
+		grabberTalon1 = new WPI_TalonSRX(44);
 		grabberTalon2 = new WPI_TalonSRX(50);
 		 
 		regTalon2.follow(regTalon1);
 		regTalon3.follow(regTalon1);
 		
 		gyro = new ADXRS450_Gyro();
-		
-		limitTop = new DigitalInput(0);
-		limitBottom = new DigitalInput(1);
+		limitBottom = new DigitalInput(0);
 		
 		autoCommandChooser = new SendableChooser<>();
-		autoCommandChooser.addDefault("One Cube", new OneCubeAuto());
-		autoCommandChooser.addObject("Two Cubes", new TwoCubeAuto());
-		autoCommandChooser.addObject("Three Cubes", new ThreeCubeAuto());
-		autoCommandChooser.addObject("Cross Baseline", new BaselineAuto());
+		autoCommandChooser.addDefault("One Cube", "One");
+		autoCommandChooser.addObject("Two Cubes", "Two");
+		autoCommandChooser.addObject("Three Cubes", "Three");
+		autoCommandChooser.addObject("Cross Baseline", "Zero");
 		autoCommandChooser.addObject("Do Nothing", null);
 		SmartDashboard.putData("Pick An Autonomous Routine", autoCommandChooser);
 		
@@ -105,10 +104,19 @@ public class Robot extends TimedRobot {
 		
 		talon1.setSelectedSensorPosition(0, 0, 10);
 		
+		robotPosition = robotPositionChooser.getSelected().intValue();
 		autoCommand = autoCommandChooser.getSelected();
 		
 		if (autoCommand != null) {
-			autoCommand.start();
+			if (autoCommand == "One") {
+				(new OneCubeAuto(robotPosition)).start();
+			} else if (autoCommand == "Two") {
+				(new TwoCubeAuto(robotPosition)).start();
+			} else if (autoCommand ==  "Three") {
+				(new ThreeCubeAuto(robotPosition)).start();
+			} else if (autoCommand == "Zero") {
+				(new BaselineAuto()).start();
+			}
 		}
 	}
 
@@ -135,33 +143,62 @@ public class Robot extends TimedRobot {
 		talon1.set(-left.getRawAxis(1));
 		regTalon1.set(-right.getRawAxis(1));
 		
-		elevatorOutput = payload.getRawAxis(1);
-		
-		if (limitTop.get()) {
-			elevatorOutput = Math.min(elevatorOutput, 0);
-		} else if (limitBottom.get()) {
-			elevatorOutput = Math.max(elevatorOutput, 0);
+		if (right.getRawButton(1)) {
+			elevatorOutput = -0.5;
+			elevatorTalon.set(elevatorOutput);
+		} else if (right.getRawButton(2)) {
+			elevatorOutput = -1.0;
+			elevatorTalon.set(elevatorOutput);
+		} else if (right.getRawButton(3)) {
+			elevatorOutput = 0.5;
+			elevatorTalon.set(elevatorOutput);
+		} else if (right.getRawButton(4)) {
+			elevatorOutput = 1.0;
+			elevatorTalon.set(elevatorOutput);
+		} else if (right.getRawButton(11)) {
+			elevatorTalon.configPeakOutputForward(0.4, 10);
+			elevatorTalon.configPeakOutputReverse(-0.4, 10);
+			elevatorTalon.set(ControlMode.Position, inchesToTicks(30));
+		} else {
+			elevatorTalon.configPeakOutputForward(1.0, 10);
+			elevatorTalon.configPeakOutputReverse(-1.0, 10);
+			elevatorTalon.set(ControlMode.PercentOutput, 0.0);
 		}
 		
-		elevatorTalon.set(elevatorOutput);
+//		if (limitBottom.get()) {
+//			elevatorOutput = Math.max(elevatorOutput, 0);
+//		} else if (elevatorTalon.getSelectedSensorPosition(0) > 12000) {
+//			elevatorOutput = Math.min(elevatorOutput, 0);
+//		}
 		
-		// cube intake
-		if (payload.getRawButton(2)) {
+//		if (right.getRawButton(5)) {
+//			grabberTalon1.set(-1.0);
+//			grabberTalon2.set(0.7);
+//		} else {
+//			grabberTalon1.set(0.0);
+//			grabberTalon2.set(0.0);
+//		}
+		
+		if (right.getRawButton(5)) {
 			grabberTalon1.set(-1.0);
-			grabberTalon2.set(-0.7);
+			grabberTalon2.set(0.7);
+		} else if (right.getRawButton(6)) {
+			grabberTalon1.set(1.0);
+			grabberTalon2.set(-1.0);
 		} else {
 			grabberTalon1.set(0.0);
 			grabberTalon2.set(0.0);
 		}
 		
-		//cube release
-		if (payload.getRawButton(1)) {
-			grabberTalon1.set(1.0);
-			grabberTalon2.set(1.0);
+		if (left.getRawButton(1)) {
+			grabberFlipperTalon.set(0.4);
 		} else {
-			grabberTalon1.set(0.0);
-			grabberTalon2.set(0.0);
+			grabberFlipperTalon.set(0.0);
 		}
+		
+		
+		
+		SmartDashboard.putNumber("Elevator Position", elevatorTalon.getSelectedSensorPosition(0));
 		
 		Scheduler.getInstance().run();
 	}

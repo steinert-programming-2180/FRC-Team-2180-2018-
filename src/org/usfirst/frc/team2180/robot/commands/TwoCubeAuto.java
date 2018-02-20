@@ -9,8 +9,8 @@ public class TwoCubeAuto extends CommandGroup {
 	
 	int position;
 	
-    public TwoCubeAuto() {
-    	setPosition(Robot.robotPositionChooser.getSelected());
+    public TwoCubeAuto(int position) {
+    	this.position = position;
     	
     	if (position == 1) {
     		if (DriverStation.getInstance().getGameSpecificMessage().charAt(0) == 'L') {
@@ -73,7 +73,7 @@ public class TwoCubeAuto extends CommandGroup {
     				addSequential(new DischargeCube());
     			} else if (DriverStation.getInstance().getGameSpecificMessage().charAt(1) == 'R') {
     				// 1RR
-    				addSequential(new OneCubeAuto());
+    				addSequential(new OneCubeAuto(1));
     				addParallel(new MoveElevator(-2000));
     				addSequential(new RunForward(-Robot.inchesToTicks(10)));
     				addParallel(new RunForward(Robot.inchesToTicks(10)));
@@ -90,7 +90,7 @@ public class TwoCubeAuto extends CommandGroup {
     		if (DriverStation.getInstance().getGameSpecificMessage().charAt(0) == 'L') {
     			if (DriverStation.getInstance().getGameSpecificMessage().charAt(1) == 'L') {
     				// 3LL
-    				addSequential(new OneCubeAuto());
+    				addSequential(new OneCubeAuto(3));
     				addParallel(new MoveElevator(-2000));
     				addSequential(new RunForward(-Robot.inchesToTicks(10)));
     				addParallel(new RunForward(Robot.inchesToTicks(10)));
@@ -160,9 +160,5 @@ public class TwoCubeAuto extends CommandGroup {
     			}
     		}
     	}
-    }
-    
-    public void setPosition(int position) {
-    	this.position = position;
     }
 }

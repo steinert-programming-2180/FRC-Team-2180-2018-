@@ -9,8 +9,8 @@ public class OneCubeAuto extends CommandGroup {
 	
 	int position;
 	
-    public OneCubeAuto() {
-    	setPosition(Robot.robotPositionChooser.getSelected());
+    public OneCubeAuto(int position) {
+    	this.position = position;
     	
     	if (position == 1) {
     		if (DriverStation.getInstance().getGameSpecificMessage().charAt(0) == 'L') {
@@ -51,9 +51,5 @@ public class OneCubeAuto extends CommandGroup {
                 addSequential(new DischargeCube());
         	}
     	}
-    }
-    
-    public void setPosition(int position) {
-    	this.position = position;
     }
 }

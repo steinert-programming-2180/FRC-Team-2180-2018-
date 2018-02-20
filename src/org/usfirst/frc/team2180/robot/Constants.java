@@ -13,7 +13,7 @@ public class Constants {
 	public static final double gyroKD = 0.0;
 	public static final double allowableGyroError = 2;
 	
-	public static final double elevatorKP = 3.3;
+	public static final double elevatorKP = 0.42625;
 	public static final double elevatorKI = 0.0;
 	public static final double elevatorKD = 0.0;
 	public static final int allowableElevatorError = 13;
