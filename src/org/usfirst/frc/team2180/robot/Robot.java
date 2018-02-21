@@ -25,6 +25,7 @@ import org.usfirst.frc.team2180.robot.commands.TwoCubeAuto;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class Robot extends TimedRobot {
@@ -43,7 +44,7 @@ public class Robot extends TimedRobot {
 	public static PIDController gyroPID;
 	public static PIDOutput gyroPIDOutput;
 	public static Joystick left, right, payload;
-	public static DigitalInput limitBottom;
+	public static DigitalInput limitBottom, limitTop;
 	public static double elevatorOutput;
 	
 	@Override
@@ -51,22 +52,24 @@ public class Robot extends TimedRobot {
 		
 		left = new Joystick(0);
 		right = new Joystick(1);
+		payload = new Joystick(2);
 		
 		regTalon1 = new WPI_TalonSRX(11);
 		regTalon2 = new WPI_TalonSRX(22);
 		regTalon3 = new WPI_TalonSRX(33);
 		
-		elevatorTalon = new WPI_TalonSRX(40);
+		elevatorTalon = new WPI_TalonSRX(50);
 		grabberFlipperTalon = new WPI_TalonSRX(55);
 		
 		grabberTalon1 = new WPI_TalonSRX(44);
-		grabberTalon2 = new WPI_TalonSRX(50);
+		grabberTalon2 = new WPI_TalonSRX(40);
 		 
 		regTalon2.follow(regTalon1);
 		regTalon3.follow(regTalon1);
 		
 		gyro = new ADXRS450_Gyro();
 		limitBottom = new DigitalInput(0);
+		limitTop = new DigitalInput(1);
 		
 		autoCommandChooser = new SendableChooser<>();
 		autoCommandChooser.addDefault("One Cube", "One");
@@ -135,6 +138,11 @@ public class Robot extends TimedRobot {
 		
 		talon1.configPeakOutputForward(1.0, 10);
 		talon1.configPeakOutputReverse(-1.0, 10);
+		
+		elevatorTalon.setSelectedSensorPosition(0, 0, 10);
+		
+		elevatorTalon.setNeutralMode(NeutralMode.Brake);
+		grabberFlipperTalon.setNeutralMode(NeutralMode.Brake);
 	}
 
 	@Override
@@ -143,33 +151,39 @@ public class Robot extends TimedRobot {
 		talon1.set(-left.getRawAxis(1));
 		regTalon1.set(-right.getRawAxis(1));
 		
-		if (right.getRawButton(1)) {
-			elevatorOutput = -0.5;
-			elevatorTalon.set(elevatorOutput);
-		} else if (right.getRawButton(2)) {
+		if (payload.getRawButton(1)) {
+//			elevatorOutput = -0.4;
+//			elevatorTalon.set(elevatorOutput);
+		} else if (payload.getRawButton(4)) {
 			elevatorOutput = -1.0;
-			elevatorTalon.set(elevatorOutput);
-		} else if (right.getRawButton(3)) {
-			elevatorOutput = 0.5;
-			elevatorTalon.set(elevatorOutput);
-		} else if (right.getRawButton(4)) {
+//			elevatorTalon.set(elevatorOutput);
+		} else if (payload.getRawButton(3)) {
+//			elevatorOutput = 0.4;
+//			elevatorTalon.set(elevatorOutput);
+		} else if (payload.getRawButton(5)) {
 			elevatorOutput = 1.0;
-			elevatorTalon.set(elevatorOutput);
+//			elevatorTalon.set(elevatorOutput);
 		} else if (right.getRawButton(11)) {
 			elevatorTalon.configPeakOutputForward(0.4, 10);
 			elevatorTalon.configPeakOutputReverse(-0.4, 10);
 			elevatorTalon.set(ControlMode.Position, inchesToTicks(30));
+			SmartDashboard.putNumber("Inches to Ticks", inchesToTicks(30));
 		} else {
 			elevatorTalon.configPeakOutputForward(1.0, 10);
 			elevatorTalon.configPeakOutputReverse(-1.0, 10);
-			elevatorTalon.set(ControlMode.PercentOutput, 0.0);
+			elevatorOutput = 0.0;
+			elevatorTalon.set(ControlMode.PercentOutput, elevatorOutput);
 		}
 		
-//		if (limitBottom.get()) {
-//			elevatorOutput = Math.max(elevatorOutput, 0);
-//		} else if (elevatorTalon.getSelectedSensorPosition(0) > 12000) {
-//			elevatorOutput = Math.min(elevatorOutput, 0);
-//		}
+		if (!limitBottom.get()) {
+			elevatorOutput = Math.min(elevatorOutput, 0);
+			elevatorTalon.set(elevatorOutput);
+		} else if (!limitTop.get()) {
+			elevatorOutput = Math.max(elevatorOutput, 0);
+			elevatorTalon.set(elevatorOutput);
+		} else {
+			elevatorTalon.set(elevatorOutput);
+		}
 		
 //		if (right.getRawButton(5)) {
 //			grabberTalon1.set(-1.0);
@@ -179,10 +193,10 @@ public class Robot extends TimedRobot {
 //			grabberTalon2.set(0.0);
 //		}
 		
-		if (right.getRawButton(5)) {
+		if (payload.getRawButton(2)) {
 			grabberTalon1.set(-1.0);
 			grabberTalon2.set(0.7);
-		} else if (right.getRawButton(6)) {
+		} else if (payload.getRawButton(1)) {
 			grabberTalon1.set(1.0);
 			grabberTalon2.set(-1.0);
 		} else {
@@ -190,8 +204,10 @@ public class Robot extends TimedRobot {
 			grabberTalon2.set(0.0);
 		}
 		
-		if (left.getRawButton(1)) {
+		if (payload.getRawButton(6)) {
 			grabberFlipperTalon.set(0.4);
+		} else if (payload.getRawButton(7)) {
+			grabberFlipperTalon.set(-0.4);
 		} else {
 			grabberFlipperTalon.set(0.0);
 		}
@@ -199,6 +215,9 @@ public class Robot extends TimedRobot {
 		
 		
 		SmartDashboard.putNumber("Elevator Position", elevatorTalon.getSelectedSensorPosition(0));
+		
+		SmartDashboard.putBoolean("Limit Top value", limitTop.get());
+		SmartDashboard.putBoolean("Limit Bottom value", limitBottom.get());
 		
 		Scheduler.getInstance().run();
 	}
