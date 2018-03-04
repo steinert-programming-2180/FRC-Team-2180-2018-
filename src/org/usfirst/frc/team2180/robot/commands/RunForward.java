@@ -15,8 +15,8 @@ public class RunForward extends Command {
 	
 	int ticks;
 	
-    public RunForward(int ticks) {
-        this.ticks = ticks;
+    public RunForward(int inches) {
+        this.ticks = Robot.inchesToTicks(inches);
     }
 
     // Called just before this Command runs the first time
