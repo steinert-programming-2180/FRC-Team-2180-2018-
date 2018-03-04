@@ -16,7 +16,7 @@ public class TwoCubeAuto extends CommandGroup {
             if (DriverStation.getInstance().getGameSpecificMessage().charAt(0) == 'L') {
                 if (DriverStation.getInstance().getGameSpecificMessage().charAt(1) == 'L') {
                     // 1LL
-                    addSequential(new RunForward(Robot.inchesToTicks(129)));
+                    addSequential(new RunForward(129));
                     addParallel(new MoveElevator(2000)); // not exact
                     addSequential(new Turn(90));
                     addSequential(new RunForward(44));
