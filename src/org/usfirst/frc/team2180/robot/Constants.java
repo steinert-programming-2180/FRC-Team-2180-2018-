@@ -19,7 +19,7 @@ public class Constants {
 	public static final int allowableElevatorError = 13;
 	public static final double elevatorAutonSpeed = 1.0;
 	
-	public static final double wheelDiameter = 6.125;
+	public static final double wheelDiameter = 4;
 	public static final int ticksPerRev = 1440;
 	
 	
