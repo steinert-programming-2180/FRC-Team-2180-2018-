@@ -12,44 +12,24 @@ public class OneCubeAuto extends CommandGroup {
     public OneCubeAuto(int position) {
     	this.position = position;
     	
-    	if (position == 1) {
+    	if (position == 2) {
     		if (DriverStation.getInstance().getGameSpecificMessage().charAt(0) == 'L') {
-    			addSequential(new RunForward(Robot.inchesToTicks(87)));
-                addSequential(new Turn(90));
-                addParallel(new MoveElevator(2000)); // calculate the exact number of ticks later
-                addParallel(new OpenGrabber());
-                addSequential(new RunForward(Robot.inchesToTicks(16)));
-                addSequential(new DischargeCube());
-    		} else if (DriverStation.getInstance().getGameSpecificMessage().charAt(0) == 'R') {
-    			addSequential(new RunForward(Robot.inchesToTicks(219.235)));
-                addSequential(new Turn(90));
-                addParallel(new MoveElevator(2000)); // calculate the exact number of ticks later
-                addParallel(new OpenGrabber());
-                addSequential(new RunForward(Robot.inchesToTicks(176.75)));
-                addSequential(new Turn(90));
-                addSequential(new RunForward(Robot.inchesToTicks(10)));
-                addSequential(new Turn(90));
-                addSequential(new DischargeCube());
+    			addSequential(new RunForward(24));
+			addSequential(new Turn(-65));
+			addParallel(new MoveElevator(2000)); // not exact
+			addSequential(new RunForward(62));
+			addSequential(new Turn(66));
+			addSequential(new RunForward(49));
+			addSequential(new DischargeCube());
+		} else if (DriverStation.getInstance().getGameSpecificMessage().charAt(0) == 'R') {
+			addSequential(new RunForward(24));
+			addSequential(new Turn(65));
+			addParallel(new MoveElevator(2000)); // not exact
+			addSequential(new RunForward(62));
+			addSequential(new Turn(-66));
+			addSequential(new RunForward(49));
+			addSequential(new DischargeCube());
     		}
-    	} else if (position == 3) {
-    		if (DriverStation.getInstance().getGameSpecificMessage().charAt(0) == 'R') {
-        		addSequential(new RunForward(Robot.inchesToTicks(87)));
-                addSequential(new Turn(-90));
-                addParallel(new MoveElevator(2000)); // calculate the exact number of ticks later
-                addParallel(new OpenGrabber());
-                addSequential(new RunForward(Robot.inchesToTicks(16)));
-                addSequential(new DischargeCube());
-        	} else if (DriverStation.getInstance().getGameSpecificMessage().charAt(0) == 'L') {
-        		addSequential(new RunForward(Robot.inchesToTicks(219.235)));
-                addSequential(new Turn(-90));
-                addParallel(new MoveElevator(2000)); // calculate the exact number of ticks later
-                addParallel(new OpenGrabber());
-                addSequential(new RunForward(Robot.inchesToTicks(176.75)));
-                addSequential(new Turn(-90));
-                addSequential(new RunForward(Robot.inchesToTicks(10)));
-                addSequential(new Turn(-90));
-                addSequential(new DischargeCube());
-        	}
     	}
     }
 }
