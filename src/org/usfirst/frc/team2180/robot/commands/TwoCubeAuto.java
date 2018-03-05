@@ -24,25 +24,66 @@ public class TwoCubeAuto extends CommandGroup {
                     addSequential(new RunForward(-44));
                     addSequential(new Turn(-72));
                     addSequential(new RunForward(78));
-                    addParallel(new MoveElevator(-2000))// not exact;
+                    addParallel(new MoveElevator(-2000)) // not exact;
                     addSequential(new Turn(128));
                     addSequential(new RunForward(35));
                     addSequential(new CaptureCube());
                     addSequential(new RunForward(101));
                     addSequential(new Turn(90));
-                    addSequential(new MoveElevator(10000));// not exact
+                    addSequential(new MoveElevator(10000)); // not exact
                     addSequential(new RunForward(19));
                     addSequential(new DischargeCube());
                     addSequential(new RunForward(-19));
-                    addSequential(new MoveElevator(-10000));// not exact
+                    addSequential(new MoveElevator(-10000)); // not exact
                 } else if (DriverStation.getInstance().getGameSpecificMessage().charAt(1) == 'R') {
                     // 1LR
-                    
+                    addSequential(new RunForward(129));
+                    addParallel(new MoveElevator(2000)); // not exact
+                    addSequential(new Turn(90));
+                    addSequential(new RunForward(44));
+                    addSequential(new DischargeCube());
+                    addSequential(new RunForward(-44));
+                    addSequential(new Turn(-90));
+                    addSequential(new RunForward(65));
+                    addSequential(new Turn(90));
+                    addSequential(new RunForward(31));
+                    addParallel(new MoveElevator(-2000)); // not exact
+                    addSequential(new Turn(54));
+                    addSequential(new RunForward(30));
+                    addSequential(new CaptureCube());
+                    addSequential(new RunForward(-30));
+                    addSequential(new Turn(-54));
+                    addSequential(new RunForward(224));
+                    addSequential(new Turn(-90));
+                    addSequential(new RunForward(68));
+                    addSequential(new Turn(-70));
+                    addSequential(new RunForward(22));
+                    addSequential(new MoveElevator(10000)); // not exact
+                    addSequential(new DischargeCube());
+                    addSequential(new MoveElevator(-10000));
                 }
             } else if (DriverStation.getInstance().getGameSpecificMessage().charAt(0) == 'R') {
                 if (DriverStation.getInstance().getGameSpecificMessage().charAt(1) == 'L') {
                     // 1RL
-                    
+                    addSequential(new RunForward(265));
+                    addSequential(new Turn(68));
+                    addSequential(new RunForward(18));
+                    addSequential(new MoveElevator(10000));
+                    addSequential(new DischargeCube());
+                    addSequential(new MoveElevator(-10000));
+                    addSequential(new RunForward(-18));
+                    addSequential(new Turn(89));
+                    addSequential(new RunForward(105));
+                    addSequential(new CaptureCube());
+                    addSequential(new RunForward(-30));
+                    addSequential(new Turn(-63));
+                    addSequential(new RunForward(210));
+                    addSequential(new Turn(90));
+                    addSequential(new RunForward(71));
+                    addSequential(new Turn(90));
+                    addParallel(new MoveElevator(2000));
+                    addSequential(new RunForward(47));
+                    addSequential(new DischargeCube());
                 } else if (DriverStation.getInstance().getGameSpecificMessage().charAt(1) == 'R') {
                     // 1RR
                     
