@@ -199,6 +199,12 @@ public class Robot extends TimedRobot {
 		} else if (payload.getRawButton(1)) {
 			grabberTalon1.set(1.0);
 			grabberTalon2.set(-1.0);
+		} else if (payload.getRawButton(10)) {
+			grabberTalon1.set(0.5);
+			grabberTalon2.set(-0.5);
+		} else if (payload.getRawButton(11)) {
+			grabberTalon1.set(0.25);
+			grabberTalon2.set(-0.25);
 		} else {
 			grabberTalon1.set(0.0);
 			grabberTalon2.set(0.0);
