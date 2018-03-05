@@ -68,9 +68,9 @@ public class TwoCubeAuto extends CommandGroup {
                     addSequential(new RunForward(265));
                     addSequential(new Turn(68));
                     addSequential(new RunForward(18));
-                    addSequential(new MoveElevator(10000));
+                    addSequential(new MoveElevator(10000)); // not exact
                     addSequential(new DischargeCube());
-                    addSequential(new MoveElevator(-10000));
+                    addSequential(new MoveElevator(-10000)); // not exact
                     addSequential(new RunForward(-18));
                     addSequential(new Turn(89));
                     addSequential(new RunForward(105));
@@ -81,12 +81,33 @@ public class TwoCubeAuto extends CommandGroup {
                     addSequential(new Turn(90));
                     addSequential(new RunForward(71));
                     addSequential(new Turn(90));
-                    addParallel(new MoveElevator(2000));
+                    addParallel(new MoveElevator(2000)); // not exact
                     addSequential(new RunForward(47));
                     addSequential(new DischargeCube());
                 } else if (DriverStation.getInstance().getGameSpecificMessage().charAt(1) == 'R') {
                     // 1RR
-                    
+                    addSequential(new RunForward(196));
+                    addSequential(new Turn(90));
+                    addSequential(new RunForward(246));
+                    addSequential(new Turn(90));
+                    addSequential(new RunForward(70));
+                    addParallel(new MoveElevator(2000)); // not exact
+                    addSequential(new Turn(90));
+                    addSequential(new RunForward(47));
+                    addSequential(new DischargeCube());
+                    addSequential(new RunForward(-47));
+                    addSequential(new Turn(59));
+                    addSequential(new RunForward(70));
+                    addSequential(new Turn(-117));
+                    addSequential(new RunForward(20));
+                    addSequential(new MoveElevator(-2000)); // not exact
+                    addSequential(new CaptureCube());
+                    addSequential(new RunForward(-87));
+                    addSequential(new Turn(77));
+                    addSequential(new RunForward(19));
+                    addSequential(new MoveElevator(10000)); // not exact
+                    addSequential(new DischargeCube());
+                    addSequential(new MoveElevator(-10000)); // not exact
                 }
             }
         } 
