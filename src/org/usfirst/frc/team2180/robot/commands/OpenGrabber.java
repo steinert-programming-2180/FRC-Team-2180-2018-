@@ -21,11 +21,11 @@ public class OpenGrabber extends Command {
     }
 
     protected void execute() {
-    	Robot.grabberFlipperTalon.set(0.4);
+    	Robot.grabberFlipperTalon.set(-0.5);
     }
 
     protected boolean isFinished() {
-    	if (timer.get() > 1.0) {
+    	if (timer.get() > 0.5) {
     		return true;
     	}
         return false;

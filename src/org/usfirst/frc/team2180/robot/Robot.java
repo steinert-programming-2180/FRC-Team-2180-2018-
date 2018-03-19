@@ -7,7 +7,11 @@
 
 package org.usfirst.frc.team2180.robot;
 
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
+import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
@@ -19,7 +23,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc.team2180.robot.commands.BaselineAuto;
+import org.usfirst.frc.team2180.robot.commands.BaselineTimeAuto;
+import org.usfirst.frc.team2180.robot.commands.MoveElevator;
 import org.usfirst.frc.team2180.robot.commands.OneCubeAuto;
+import org.usfirst.frc.team2180.robot.commands.TestLegIssueCommand;
 import org.usfirst.frc.team2180.robot.commands.ThreeCubeAuto;
 import org.usfirst.frc.team2180.robot.commands.TwoCubeAuto;
 
@@ -46,6 +53,9 @@ public class Robot extends TimedRobot {
 	public static Joystick left, right, payload;
 	public static DigitalInput limitBottom, limitTop;
 	public static double elevatorOutput;
+	public static CvSink cvSink;
+	public static UsbCamera camera;
+	public static CvSource outputStream;
 	
 	@Override
 	public void robotInit() {
@@ -77,6 +87,8 @@ public class Robot extends TimedRobot {
 		autoCommandChooser.addObject("Three Cubes", "Three");
 		autoCommandChooser.addObject("Cross Baseline", "Zero");
 		autoCommandChooser.addObject("Do Nothing", null);
+		autoCommandChooser.addObject("Test Command for PID Legs", "Test");
+		autoCommandChooser.addObject("Test Command for Time Legs", "Time");
 		SmartDashboard.putData("Pick An Autonomous Routine", autoCommandChooser);
 		
 		robotPositionChooser = new SendableChooser<>();
@@ -90,6 +102,11 @@ public class Robot extends TimedRobot {
 		setupElevatorPID();
 		
 		elevatorOutput = 0.0;
+		
+		camera = CameraServer.getInstance().startAutomaticCapture();
+		camera.setResolution(160, 120);
+		outputStream = CameraServer.getInstance().putVideo("Hey Drivers Look At This", 160, 120);
+//		cvSink = CameraServer.getInstance().getVideo();
 	}
 
 	@Override
@@ -105,6 +122,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		
+		elevatorTalon.setNeutralMode(NeutralMode.Brake);
+		
 		talon1.setSelectedSensorPosition(0, 0, 10);
 		
 		robotPosition = robotPositionChooser.getSelected().intValue();
@@ -119,6 +138,10 @@ public class Robot extends TimedRobot {
 				(new ThreeCubeAuto(robotPosition)).start();
 			} else if (autoCommand == "Zero") {
 				(new BaselineAuto()).start();
+			} else if (autoCommand == "Test") {
+				(new TestLegIssueCommand()).start();
+			} else if (autoCommand == "Time") {
+				(new BaselineTimeAuto()).start();
 			}
 		}
 	}
@@ -185,6 +208,8 @@ public class Robot extends TimedRobot {
 			elevatorTalon.set(elevatorOutput);
 		}
 		
+		SmartDashboard.putNumber("Drivetrain encoder position", talon1.getSelectedSensorPosition(0));
+		
 //		if (right.getRawButton(5)) {
 //			grabberTalon1.set(-1.0);
 //			grabberTalon2.set(0.7);
@@ -199,16 +224,20 @@ public class Robot extends TimedRobot {
 		} else if (payload.getRawButton(1)) {
 			grabberTalon1.set(1.0);
 			grabberTalon2.set(-1.0);
-		} else if (payload.getRawButton(10)) {
+		} /*else if (payload.getRawButton(10)) {
 			grabberTalon1.set(0.5);
 			grabberTalon2.set(-0.5);
-		} else if (payload.getRawButton(11)) {
+		}*/ else if (payload.getRawButton(10)) {
 			grabberTalon1.set(0.25);
 			grabberTalon2.set(-0.25);
 		} else {
 			grabberTalon1.set(0.0);
 			grabberTalon2.set(0.0);
 		}
+		
+		
+		
+		
 		
 		if (payload.getRawButton(6)) {
 			grabberFlipperTalon.set(0.4);

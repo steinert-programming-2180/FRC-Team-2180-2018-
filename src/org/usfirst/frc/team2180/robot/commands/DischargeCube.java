@@ -21,12 +21,12 @@ public class DischargeCube extends Command {
     }
 
     protected void execute() {
-    	Robot.grabberTalon1.set(1.0);
-    	Robot.grabberTalon2.set(1.0);
+    	Robot.grabberTalon1.set(0.8);
+    	Robot.grabberTalon2.set(-0.8);
     }
 
     protected boolean isFinished() {
-    	if (timer.get() > 0.3) {
+    	if (timer.get() > 1.5) {
     		return true;
     	}
         return false;

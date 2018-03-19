@@ -24,7 +24,7 @@ public class TwoCubeAuto extends CommandGroup {
                     addSequential(new RunForward(-44));
                     addSequential(new Turn(-72));
                     addSequential(new RunForward(78));
-                    addParallel(new MoveElevator(-2000)) // not exact;
+                    addParallel(new MoveElevator(-2000)); // not exact;
                     addSequential(new Turn(128));
                     addSequential(new RunForward(35));
                     addSequential(new CaptureCube());

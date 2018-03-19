@@ -1,5 +1,6 @@
 package org.usfirst.frc.team2180.robot.commands;
 
+import org.usfirst.frc.team2180.robot.Constants;
 import org.usfirst.frc.team2180.robot.Robot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.command.Command;
@@ -19,8 +20,14 @@ public class Turn extends Command {
     }
 
     protected void initialize() {
+    	
+    	Robot.talon1.set(ControlMode.PercentOutput, 0);
+    	
     	Robot.gyroPID.setSetpoint(angle);
     	Robot.gyroPID.enable();
+    	
+    	Robot.talon1.configPeakOutputForward(0.8, 10);
+		Robot.talon1.configPeakOutputReverse(-0.8, 10);
     	
     	Robot.gyro.reset();
     	// No need to reset the Gyro. you don't want error from the previous command to carry over to this one.

@@ -5,6 +5,7 @@ import org.usfirst.frc.team2180.robot.Robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -14,13 +15,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class RunForward extends Command {
 	
 	int ticks;
-	
+	Timer timer;
     public RunForward(int inches) {
         this.ticks = Robot.inchesToTicks(inches);
+        timer = new Timer();
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	
+    	Robot.talon1.set(ControlMode.Position, 0);
     	
     	Robot.talon1.configPeakOutputForward(Constants.autonSpeed, 10);
 		Robot.talon1.configPeakOutputReverse(-Constants.autonSpeed, 10);
@@ -36,18 +40,20 @@ public class RunForward extends Command {
     	Robot.talon1.setSelectedSensorPosition(0, 0, 10);
     	
     	Robot.gyro.reset();
+    	
+    	timer.start();
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	
     	Robot.talon1.set(ControlMode.Position, ticks);
     	Robot.regTalon1.set(Constants.autonSpeed - (Robot.gyro.getAngle() * 0.03));
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if (ticks - (Robot.talon1.getSelectedSensorPosition(0)) < 40) {
+    	if ((ticks - (Robot.talon1.getSelectedSensorPosition(0)) < 100) || timer.get() > 3) {
+    		SmartDashboard.putNumber("Our Last Resort Encoder Reading", ticks - (Robot.talon1.getSelectedSensorPosition(0)));
     		Robot.regTalon1.set(0.0);
     		return true;
     	}
@@ -56,6 +62,7 @@ public class RunForward extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
+    	timer.stop();
     	SmartDashboard.putString("PID Status", "Done");
     	Robot.talon1.set(ControlMode.PercentOutput, 0.0);
     	
