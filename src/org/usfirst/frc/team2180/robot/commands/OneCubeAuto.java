@@ -16,7 +16,11 @@ public class OneCubeAuto extends CommandGroup {
     		if (DriverStation.getInstance().getGameSpecificMessage().charAt(0) == 'L') {
 //    			addSequential(new OpenGrabber());
 //    			addParallel(new MoveElevator(1.1)); // not exact
-	    		addSequential(new RunForward(120));
+	    		addSequential(new RunForward(20, 0.1, 1));
+	    		addSequential(new Turn(30, 1.0, 1));
+	    		addSequential(new RunForward(20, 0.1, 1));
+	    		addSequential(new Turn(-30, 1.0, 1));
+	    		addSequential(new RunForward(10, 0.1, 0));
 //				addSequential(new Turn(-52));
 //				addSequential(new RunForward(55));
 //				addSequential(new Turn(47));
@@ -25,12 +29,12 @@ public class OneCubeAuto extends CommandGroup {
 			} else if (DriverStation.getInstance().getGameSpecificMessage().charAt(0) == 'R') {
 //				addSequential(new OpenGrabber());
 //				addParallel(new MoveElevator(1.1)); // not exact
-	    		addSequential(new RunForward(120));
-//				addSequential(new Turn(43));
-//				addSequential(new RunForward(40));
-//				addSequential(new Turn(-43));
-////				addSequential(new RunForward(28));
-//				addSequential(new DischargeCube());+
+	    		addSequential(new RunForward(40, 0.25, 0.25));
+				addSequential(new Turn(43, 1.0, 0.25));
+				addSequential(new RunForward(40, 0.25, 0.25));
+				addSequential(new Turn(-43, 1.0, 0.5));
+				addSequential(new RunForward(15, 0.25, 0.25));
+//				addSequential(new DischargeCube());
     		}
     	}
     }

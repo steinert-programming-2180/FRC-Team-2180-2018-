@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class TestCommand extends CommandGroup {
 
     public TestCommand() {
-        addSequential(new Turn(-90));
-        addSequential(new RunForward(-Robot.inchesToTicks(10)));
+//        addSequential(new Turn(-90));
+//        addSequential(new RunForward(-Robot.inchesToTicks(10)));
     }
 }

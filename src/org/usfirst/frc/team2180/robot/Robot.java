@@ -27,8 +27,6 @@ import org.usfirst.frc.team2180.robot.commands.BaselineTimeAuto;
 import org.usfirst.frc.team2180.robot.commands.MoveElevator;
 import org.usfirst.frc.team2180.robot.commands.OneCubeAuto;
 import org.usfirst.frc.team2180.robot.commands.TestLegIssueCommand;
-import org.usfirst.frc.team2180.robot.commands.ThreeCubeAuto;
-import org.usfirst.frc.team2180.robot.commands.TwoCubeAuto;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -56,6 +54,7 @@ public class Robot extends TimedRobot {
 	public static CvSink cvSink;
 	public static UsbCamera camera;
 	public static CvSource outputStream;
+	public static int autoLegCounter = 0;
 	
 	@Override
 	public void robotInit() {
@@ -97,7 +96,7 @@ public class Robot extends TimedRobot {
 		robotPositionChooser.addObject("3", new Integer(3));
 		SmartDashboard.putData("Pick The Bot's Position", robotPositionChooser);
 		
-		setupDrivetrainPID();
+		setupDrivetrainPID(0);
 		setupGyroPID();
 		setupElevatorPID();
 		
@@ -129,13 +128,15 @@ public class Robot extends TimedRobot {
 		robotPosition = robotPositionChooser.getSelected().intValue();
 		autoCommand = autoCommandChooser.getSelected();
 		
+		autoLegCounter = 0;
+		
 		if (autoCommand != null) {
 			if (autoCommand == "One") {
 				(new OneCubeAuto(robotPosition)).start();
 			} else if (autoCommand == "Two") {
-				(new TwoCubeAuto(robotPosition)).start();
+//				(new TwoCubeAuto(robotPosition)).start();
 			} else if (autoCommand ==  "Three") {
-				(new ThreeCubeAuto(robotPosition)).start();
+//				(new ThreeCubeAuto(robotPosition)).start();
 			} else if (autoCommand == "Zero") {
 				(new BaselineAuto()).start();
 			} else if (autoCommand == "Test") {
@@ -158,6 +159,8 @@ public class Robot extends TimedRobot {
 	public void teleopInit() {
 		
 		gyro.reset();
+		
+		talon1.set(ControlMode.PercentOutput, 0.0);
 		
 		talon1.configPeakOutputForward(1.0, 10);
 		talon1.configPeakOutputReverse(-1.0, 10);
@@ -261,7 +264,7 @@ public class Robot extends TimedRobot {
 	public void testPeriodic() {
 	}
 	
-	public void setupDrivetrainPID() {
+	public static void setupDrivetrainPID(int pidSlot) {
 		
 		sensorInPhase = false; // don't change these
 		motorInverted = true; // don't change these
@@ -278,10 +281,10 @@ public class Robot extends TimedRobot {
 		talon2.setInverted(motorInverted);
 		talon3.setInverted(motorInverted);
 		
-		talon1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
+		talon1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, pidSlot, 10);
 		talon1.setSensorPhase(sensorInPhase);
 		
-		talon1.configAllowableClosedloopError(0, Constants.allowableAutonPositionError, 10);
+		talon1.configAllowableClosedloopError(pidSlot, Constants.allowableAutonPositionError, 10);
 		
 		talon1.configNominalOutputForward(0, 10);
 		talon1.configNominalOutputReverse(0, 10);

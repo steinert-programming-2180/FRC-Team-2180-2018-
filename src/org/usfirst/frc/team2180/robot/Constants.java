@@ -8,7 +8,8 @@ public class Constants {
 	public static final double autonSpeed = 0.3;
 	public static final int allowableAutonPositionError = 40;
 	
-	public static final double gyroKP = 0.015;
+//	public static final double gyroKP = 0.015; //for competition
+	public static final double gyroKP = 0.018;
 	public static final double gyroKI = 0.00001;
 	public static final double gyroKD = 0.0;
 	public static final double allowableGyroError = 2;
@@ -21,6 +22,4 @@ public class Constants {
 	
 	public static final double wheelDiameter = 4;
 	public static final int ticksPerRev = 1440;
-	
-	
 }

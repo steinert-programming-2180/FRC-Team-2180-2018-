@@ -10,6 +10,6 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class BaselineAuto extends CommandGroup {
 
     public BaselineAuto() {
-        addSequential(new RunForward(Robot.inchesToTicks(10)));
+//        addSequential(new RunForward(Robot.inchesToTicks(10)));
     }
 }
